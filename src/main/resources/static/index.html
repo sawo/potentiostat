@@ -11,6 +11,12 @@
           <form id="actionForm" name="actionForm">
             <div class="form-group">
               <label for="actionType">Action</label>
+              <select name="serial" id="serial" class="form-control"></select>
+              <button type="button" class="btn btn-info" onclick="reloadPortList()">Reload port list</button>
+            </div>
+            
+            <div class="form-group">
+              <label for="actionType">Action</label>
               <select name="actionType" id="actionType" class="form-control">
                 <option value="cycVolt">Cyclic voltametry</option>
               </select>
@@ -95,6 +101,20 @@
           myChart.update();
         });
       };
+
+      reloadPortList = function() {
+        $.get("/api/serial", function(resultList) {
+          $('#serial').empty();
+          $.each(resultList, function (i, item) {
+            $('#serial').append($('<option>', {
+              value: item,
+              text : item
+            }));
+          });
+        });
+      };
+      
+      reloadPortList();
     });
   </script>
 </html>

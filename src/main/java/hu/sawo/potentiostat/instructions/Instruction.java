@@ -30,39 +30,46 @@ public class Instruction {
         if (instruction != null) {
             result.append(instruction).append("!");
         } else {
+            result.append(",");
             return result.toString();
         }
 
         if (startVolt != null) {
             result.append(startVolt).append("@");
         } else {
+            result.append(",");
             return result.toString();
         }
 
         if (peakVolt != null) {
             result.append(peakVolt).append("#");
         } else {
+            result.append(",");
             return result.toString();
         }
 
         if (scanRate != null) {
             result.append(scanRate).append("$");
         } else {
+            result.append(",");
             return result.toString();
         }
 
         if (waveType != null) {
             result.append(waveType.ordinal()).append("%");
         } else {
+            result.append(",");
             return result.toString();
         }
 
         if (iterations != null) {
             result.append(iterations).append("^");
         } else {
+            result.append(",");
             return result.toString();
         }
 
+        result.append(",");
         return result.toString();
     }
 
