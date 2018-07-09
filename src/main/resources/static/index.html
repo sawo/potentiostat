@@ -2,7 +2,7 @@
 <link lang="en">
   <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Potentiostat</title>
   </head>
   <body>
     <div class="container-fluid">
@@ -14,7 +14,18 @@
               <select name="serial" id="serial" class="form-control"></select>
               <button type="button" class="btn btn-info" onclick="reloadPortList()">Reload port list</button>
             </div>
-            
+
+
+            <div class="form-group">
+              <label for="resolution">Action</label>
+              <select name="resolution" id="resolution" class="form-control">
+                <option value="resolution1">100 μA</option>
+                <option value="resolution2">10 μA</option>
+                <option value="resolution3">1000 nA</option>
+                <option value="resolution4">100 nA</option>
+              </select>
+            </div>
+
             <div class="form-group">
               <label for="actionType">Action</label>
               <select name="actionType" id="actionType" class="form-control">
@@ -69,7 +80,7 @@
       };
       var ctx = document.getElementById("myChart");
       var myChart = new Chart(ctx, {
-        type: 'line',
+        type: 'scatter',
         data: {
           datasets: [],
           labels: []
@@ -92,7 +103,7 @@
           var color = getRandomColor();
           var newDataset = {
             borderColor: color,
-//            backgroundColor: color,
+            backgroundColor: color,
             data: result,
             label: 'Analysis'
           };

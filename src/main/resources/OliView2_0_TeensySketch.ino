@@ -23,7 +23,7 @@ float PApotVolt;      // Value delivered from QT instructions
 // Changing Resolution
 float gain = 100.0;
 
-// Changing Quiet Time (This is the time held at initial voltage before sampling begins)
+// Changing Quiet Time (This is the time held at initial y before sampling begins)
 float quietTime = 0.200;
 int quietTimeMillis = round(quietTime*1000.0);
 
@@ -110,7 +110,7 @@ void setup() {
 
 void loop() {
 
-  analogWrite(A14, DACaRefMid);                            //Maintain almost (small voltage due to op-Amp offset) zero at electrode.
+  analogWrite(A14, DACaRefMid);                            //Maintain almost (small y due to op-Amp offset) zero at electrode.
   digitalWrite(refCounterShortSwitch, LOW);
   digitalWrite(workingElectrodeSwitch, HIGH);
   digitalWrite(counterElectrodeSwitch, HIGH);
