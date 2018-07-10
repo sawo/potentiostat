@@ -42,9 +42,11 @@ public class PotentiostatController {
                                      SerialPort.DATABITS_8,
                                      SerialPort.STOPBITS_1,
                                      SerialPort.PARITY_NONE);
-                // setting up resolution
-                serialPort.writeString("resolution2@,");
 
+                // setting up sampleRate
+                serialPort.writeString("changeSampleRate!2000@#$%^");
+                // setting up resolution
+                serialPort.writeString("resolution!1@#$%^");
             } catch (SerialPortException e) {
                 log.error(e.getMessage());
                 System.exit(-1);
@@ -62,13 +64,15 @@ public class PotentiostatController {
     public List<CV> getResults(@RequestParam("startVolt") float startVolt,
                                @RequestParam("peakVolt") float peakVolt,
                                @RequestParam("scanRate") int scanRate,
-                               @RequestParam("waveType") int waveType) throws SerialPortException,
-                                                                              InterruptedException {
+                               @RequestParam("waveType") int waveType,
+                               @RequestParam("moving_average") int movingAverage,
+                               @RequestParam("correction") float correction) throws SerialPortException,
+                                                                                    InterruptedException {
         if (serialPort == null) {
             log.error("OliView was not found");
             return newArrayList();
         }
-        
+
         List<CV> result = newArrayList();
         // sending command
         String inputData =
@@ -86,7 +90,7 @@ public class PotentiostatController {
             }
         }
 
-        addValuesToResultList(result, buffer.toString());
+        addValuesToResultList(result, movingAverage, correction, buffer.toString());
 
         System.out.println(result.size() + " results so far");
         serialPort.closePort();
@@ -104,16 +108,16 @@ public class PotentiostatController {
 
     }
 
-    private void addValuesToResultList(List<CV> resultList, String dataChunk) {
+    private void addValuesToResultList(List<CV> resultList, int movingAverage, float correction, String dataChunk) {
         final String[] values = dataChunk.split("\r\n");
-        MovingAverage ma14 = new MovingAverage(14);
+        MovingAverage ma = new MovingAverage(movingAverage);
         for (String value : values) {
             try {
                 CV cv = new CV(value);
 
                 // doing moving average
-                ma14.add(BigDecimal.valueOf(cv.getY()));
-                cv.setY(ma14.getAverage().floatValue());
+                ma.add(BigDecimal.valueOf(cv.getY()));
+                cv.setY(ma.getAverage().floatValue() + correction);
 
                 resultList.add(cv);
             } catch (NumberFormatException e) {
