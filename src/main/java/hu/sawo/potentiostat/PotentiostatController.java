@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -69,8 +70,12 @@ public class PotentiostatController {
                                @RequestParam("correction") float correction) throws SerialPortException,
                                                                                     InterruptedException {
         if (serialPort == null) {
-            log.error("OliView was not found");
-            return newArrayList();
+            // try it again. Maybe the HW was plugged after app. start
+            this.initPotentiostat();
+            if (serialPort == null) {
+                log.error("OliView was not found");
+                return newArrayList();
+            }
         }
 
         List<CV> result = newArrayList();
@@ -93,7 +98,6 @@ public class PotentiostatController {
         addValuesToResultList(result, movingAverage, correction, buffer.toString());
 
         System.out.println(result.size() + " results so far");
-        serialPort.closePort();
         return result;
     }
 
@@ -124,5 +128,11 @@ public class PotentiostatController {
                 System.out.println("bad number: " + dataChunk);
             }
         }
+    }
+
+    @PreDestroy
+    public void closeSerialPort() throws SerialPortException {
+        System.out.println("Closing serial port ...");
+        serialPort.closePort();
     }
 }
